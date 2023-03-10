@@ -26,12 +26,12 @@ cd ..
 
 # === customization ===
 # install required packages
-pacman -S --needed git neofetch nitch base-devel polybar rofi pyton python-pywal calc ranger w3m imlib2 mpv rxvt-unicode
+pacman -S git neofetch base-devel polybar rofi python python-pywal calc ranger w3m imlib2 mpv rxvt-unicode
 
 # == ranger setup ==
 # scripts need to be changed to allow ranger to utilize w3m correctly (iirc??)
 echo "You may need to change ranger's default scripts in order to utilize w3m correctly"
-echo "Note: ADD THIS TO SCRIPT AUTOMATION"
+ranger --copy-config=all
 
 
 # install necessary fonts
@@ -81,8 +81,6 @@ sudo pacman -S discord
 # install betterdiscord
 yay betterdiscordctl
 
-betterdiscordctl install
-
 # install discord themeing
 yay pywal-discord
 
@@ -101,3 +99,14 @@ sudo pacman -S smplayer-themes
 # NEED to set up
 # spicetify
 # bluetooth
+
+# === Cleanup and Customization ===
+# == Removal of sidebars ==
+#echo "URxvt.scrollBar: false" >> ~/.Xresources
+#xrdb ~/.Xresources
+
+# == NOTES ==
+clear
+echo "You'll need to run these commands after these scripts finish: "
+echo "discord (and let update)"
+echo "betterdiscordctl install"
