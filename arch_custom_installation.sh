@@ -95,6 +95,10 @@ sudo pacman -S smplayer
 sudo pacman -S smplayer-skins
 sudo pacman -S smplayer-themes
 
+# == tailscale (home network tunneling) ==
+sudo pacman -S tailscale
+sudo systemctl start tailscaled
+sudo systemctl enable tailscaled
 
 # NEED to set up
 # spicetify
@@ -110,3 +114,4 @@ clear
 echo "You'll need to run these commands after these scripts finish: "
 echo "discord (and let update)"
 echo "betterdiscordctl install"
+echo "tailscale -up"
