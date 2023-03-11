@@ -100,6 +100,9 @@ sudo pacman -S tailscale
 sudo systemctl start tailscaled
 sudo systemctl enable tailscaled
 
+# == font manager ==
+sudo pacman -S font-manager
+
 # NEED to set up
 # spicetify
 # bluetooth
