@@ -100,6 +100,9 @@ sudo pacman -S tailscale
 sudo systemctl start tailscaled
 sudo systemctl enable tailscaled
 
+# == obsidian (second brain) ==
+sudo pacman -S obsidian
+
 # == font manager ==
 sudo pacman -S font-manager
 
