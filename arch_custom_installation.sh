@@ -106,6 +106,9 @@ sudo pacman -S obsidian
 # == font manager ==
 sudo pacman -S font-manager
 
+# == atom-bin code editor ==
+yay -s atom-bin
+
 # NEED to set up
 # spicetify
 # bluetooth
