@@ -106,8 +106,8 @@ sudo pacman -S obsidian
 # == font manager ==
 sudo pacman -S font-manager
 
-# == atom-bin code editor ==
-yay -s atom-bin
+# == github cli ==
+sudo pacman -S github-cli
 
 # NEED to set up
 # spicetify
