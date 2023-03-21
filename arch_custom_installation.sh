@@ -109,6 +109,9 @@ sudo pacman -S font-manager
 # == github cli ==
 sudo pacman -S github-cli
 
+# == vscodium ==
+yay -S vscodium
+
 # NEED to set up
 # spicetify
 # bluetooth
@@ -124,3 +127,4 @@ echo "You'll need to run these commands after these scripts finish: "
 echo "discord (and let update)"
 echo "betterdiscordctl install"
 echo "tailscale -up"
+echo "You'll also need to add the \"Wal Theme\" extension to vscodium"
