@@ -1,3 +1,4 @@
+<<com
 # == during install, chroot ==
 # update packages
 pacman -Syu
@@ -10,7 +11,7 @@ pacman -S dhcpcd
 # start network service
 sudo systemctl enable dhcpcd
 sudo systemctl enable iwd
-
+com
 
 # == post install ==
 
