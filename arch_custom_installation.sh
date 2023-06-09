@@ -11,6 +11,9 @@ pacman -S dhcpcd
 # start network service
 sudo systemctl enable dhcpcd
 sudo systemctl enable iwd
+
+# == github ==
+pacman -S git
 com
 
 # == post install ==
