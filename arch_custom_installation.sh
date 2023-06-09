@@ -30,7 +30,7 @@ cd ..
 
 # === customization ===
 # install required packages
-pacman -S git neofetch base-devel polybar rofi python python-pywal calc ranger w3m imlib2 mpv rxvt-unicode
+pacman -S neofetch base-devel polybar rofi python python-pywal calc ranger w3m imlib2 mpv rxvt-unicode
 
 # == ranger setup ==
 # scripts need to be changed to allow ranger to utilize w3m correctly (iirc??)
