@@ -6,11 +6,13 @@ pacman -Syu
 
 # == networking ==
 # install network packages
-pacman -S dhcpcd
+pacman -S dhcpcd iwd
 
 # start network service
 sudo systemctl enable dhcpcd
+sudo systemctl start dhcpcd
 sudo systemctl enable iwd
+sudo systemctl start iwd
 
 # == github ==
 pacman -S git
