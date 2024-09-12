@@ -15,7 +15,7 @@ A script to easily and quickly replicate my setup as I move from computer to com
 ### Executing install script
 
 ```bash
-sudo wget -O - https://raw.githubusercontent.com/EternalDusk/dotfiles/main/installScript.sh | bash
+sudo wget -O - https://raw.githubusercontent.com/EternalDusk/dotfiles/main/installScript-wget.sh | bash
 ```
 
 ## Authors
