@@ -2,7 +2,7 @@
 
 # Ensure the script is run with sudo or as root
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as sudo from the home directory, NOT AS ROOT" 
    exit 1
 fi
 
@@ -10,6 +10,8 @@ LOGFILE="install.log"
 exec > >(tee -i ${LOGFILE})
 exec 2>&1
 
+
+# ====== HELPER FUNCTIONS ======
 Help()
 {
 	echo "Welcome to Dusk's arch install script (v3)";
@@ -23,7 +25,55 @@ function install_all
 	install_i3
 	install_customization
 	install_software
+	update_config
+
+	echo "< ! > Install Finished!";
 }
+
+function cpy() {
+  if ! [ -d "$HOME/.config/$2" ]; then
+    mkdir "$HOME/.config/$2"
+  fi
+  if [ -f "$HOME/.config/$2/$1" ]; then
+    mv "$HOME/.config/$2/$1" "$HOME/.config/$2/$1.old"
+  fi
+  cp "$2/$1" "$HOME/.config/$2/"
+}
+
+update_config() {
+	cd .config
+	cpy alacritty.yml alacritty
+	cpy config i3
+	cpy picom.conf picom
+
+	echo "Moving configuration files..."
+}
+
+
+install_pacman() {
+    local package=$1
+    
+    # Check if package name is provided
+    if [ -z "$package" ]; then
+        echo "No package specified. Skipping installation."
+        return 1
+    fi
+    
+    echo "Installing $package..."
+    
+	# TODO check if --needed affects anything
+    if pacman -S "$package" --noconfirm --needed; then
+        echo "$package installed successfully."
+    else
+        echo "Failed to install $package."
+    fi
+}
+
+
+# ====== REQUIRED PACKAGES ======
+# pacman -Syu, make, git, github-cli, yay, dhcpcd, iwd
+# neofetch, rofi, python, calc, w3m, imlib2, mpv, htop
+# ranger, thunar, gvfs, pavucontrol
 
 function install_required
 {
@@ -33,19 +83,15 @@ function install_required
 		pacman -S base-devel --noconfirm
 	} || echo "Failed to install base packages."
 
-	echo "Installing make..."
-	{
-		pacman -S make --noconfirm
-	} || echo "Failed to install make."
+	install_pacman make
 
 	# Need to add github-desktop as well
-	echo "Installing git..."
-	{
-		pacman -S git github-cli --noconfirm
-	} || echo "Failed to install git."
+	install_pacman git
+	install_pacman github-cli
 
 	echo "Installing yay package manager..."
 	{
+		cd ~
 		su -c "git clone https://aur.archlinux.org/yay-bin.git"
 		cd yay-bin
 		su -c "makepkg -si"
@@ -54,7 +100,9 @@ function install_required
 
 	echo "Installing networking services and starting them..."
 	{
-		pacman -S dhcpcd iwd --noconfirm
+		install_pacman dhcpcd
+		install_pacman iwd
+
 		systemctl enable dhcpcd
 		systemctl enable iwd
 		systemctl start dhcpcd
@@ -65,41 +113,49 @@ function install_required
 	{
 		# We iterate through each in case one throws errors
 		for pkg in neofetch rofi python calc w3m imlib2 mpv htop; do
-			pacman -S $pkg --noconfirm || echo "Failed to install $pkg."
+			install_pacman $pkg
 		done
 	} || echo "Failed to install necessary packages."
 
 	echo "Installing and setting up ranger..."
 	{
-		pacman -S ranger --noconfirm
+		install_pacman ranger
+		# ENSURE THIS WORKS!
 		ranger --copy-config=all
 		sed -i '/set preview_images false/c\set preview_images true' ~/.config/ranger/rc.conf
 	} || echo "Failed to set up ranger."
 
-	echo "Installing thunar and gvfs (for auto-mounting and file browsing)..."
-	{
-		pacman -S thunar gvfs --noconfirm
-	} || echo "Failed to install thunar and gvfs."
+	# File Browser
+	install_pacman thunar
 
-	echo "Installing pavucontrol (audio mixer/management)..."
-	{
-		pacman -S pavucontrol --noconfirm
-	} || echo "Failed to install pavucontrol."
+	# Auto-mounting USBs and external storage
+	install_pacman gvfs
+
+	# Audio Mixer/Management
+	install_pacman pavucontrol
+
+	# Terminal
+	install_pacman alacritty
+	install_pacman fish
+	echo cat \~/.cache/wal/sequences >> ~./config/fish/fish.conf
+	echo source ~/.cache/wal/colors-tty.sh >> ~./config/fish/fish.conf
 }
+
+
+# ====== i3 PACKAGES ======
+# xorg-apps, numlockx, lxappearance, arc-gtk-theme, papirus-icon-theme
+# URxvt.scrollbar fix
 
 function install_i3
 {
-	echo "Installing XORG (display server)..."
-	{
-		# removed i3-gaps, i3blocks, i3lock, xorg-server, xorg-xinit, assuming desktop i3-wm install. Might add back later
-		pacman -S xorg-apps numlockx --noconfirm
-	} || echo "Failed to install XORG and i3 gaps."
+	# removed i3-gaps, i3blocks, i3lock, xorg-server, xorg-xinit, assuming desktop i3-wm install. Might add back later
+	install_pacman xorg-apps
+	install_pacman numlockx
 
-	echo "Installing LightDM (display manager) appearance and themes..."
-	{
-		# removed lightdm and lightdm-gtk-greeter, assuming desktop i3-wm install. Might add back later
-		pacman -S lxappearance arc-gtk-theme papirus-icon-theme --needed --noconfirm
-	} || echo "Failed to install LightDM."
+	# removed lightdm and lightdm-gtk-greeter, assuming desktop i3-wm install. Might add back later
+	install_pacman lxappearance
+	install_pacman arc-gtk-theme
+	install_pacman papirus-icon-theme
 
 	# Removed lightdm service, assuming desktop i3-wm install
 
@@ -109,6 +165,11 @@ function install_i3
 		xrdb ~/.Xresources
 	} || echo "Failed to apply xorg customizations."
 }
+
+
+# ====== CUSTOMIZATION PACKAGES ======
+# fonts (lsited below), wallpapers (from github), font-manager, picom, polybar, polybar-themes
+# python-pywal, wal, feh, copies ./setWallpaper.sh script
 
 function install_customization
 {
@@ -120,11 +181,11 @@ function install_customization
 		} || echo "Failed to install fonts packages."
 	fi
 
-	echo "Installing font manager..."
-	{
-		pacman -S font-manager --noconfirm
-	} || echo "Failed to install font manager."
+	install_pacman font-manager
 
+	install_pacman picom
+
+	# Add polybar setup to i3 automatically (might need to just add an i3.config file to copy)
 	echo "Installing polybar and polybar themes..."
 	{
 		pacman -S polybar --noconfirm
@@ -135,10 +196,9 @@ function install_customization
 		cd ..
 	} || echo "Failed to install polybar and polybar themes."
 
-	echo "Installing pywal..."
-	{
-		pacman -S python-pywal --noconfirm
-	} || echo "Failed to install pywal."
+	install_pacman wal
+	install_pacman feh
+	install_pacman python-pywal
 	
 	read -p "Do you want to download Dusk's wallpaper repo? (y/n): " download_wallpapers
 	if [[ $download_wallpapers == "y" ]]; then
@@ -155,33 +215,32 @@ function install_customization
 	} || echo "Failed to copy setWallpaper.sh script."
 }
 
+
+# ====== SOFTWARE PACKAGES ======
+
 function install_software
 {
-	echo "Installing firefox..."
-	{
-		pacman -S firefox --noconfirm
-	} || echo "Failed to install firefox."
+	install_pacman firefox
+	install_pacman discord
 
-	echo "Installing discord, betterdiscordctl..."
+	echo "Installing betterdiscordctl..."
 	{
-		pacman -S discord --noconfirm
 		yay -S betterdiscordctl
-	} || echo "Failed to install discord, betterdiscordctl."
+	} || echo "Failed to install betterdiscordctl."
 
-	echo "Installing libreoffice..."
-	{
-		pacman -S libreoffice-still --noconfirm
-	} || echo "Failed to install libreoffice."
+	install_pacman libreoffice-still
 
-	echo "Installing ffmpeg and smplayer (video player)..."
-	{
-		pacman -S ffmpeg smplayer smplayer-skins smplayer-themes --noconfirm
-	} || echo "Failed to install ffmpeg and smplayer."
+	install_pacman ffmpeg
+	install_pacman smplayer
+	install_pacman smplayer-skins
+	install_pacman smplayer-themes
 
-	echo "Installing obsidian..."
+	install_pacman obsidian
+
+	echo "Installing pywalfox..."
 	{
-		pacman -S obsidian --noconfirm
-	} || echo "Failed to install obsidian."
+		yay -S kando
+	} || echo "Failed to install pywalfox."
 
 	# Only if pywal is installed
 	if pacman -Qs python-pywal > /dev/null ; then
@@ -200,6 +259,8 @@ function install_software
 
 function menu_screen
 {
+	cd ~
+	echo "Current working directory: ~";
 	echo "   ___               __          ___               __         ____             __          __   __        ____              _          __ "; 
 	echo "  / _ \ __ __  ___  / /__       / _ |  ____ ____  / /        /  _/  ___   ___ / /_ ___ _  / /  / /       / __/ ____  ____  (_)   ___  / /_";
 	echo " / // // // / (_-< /  '_/      / __ | / __// __/ / _ \      _/ /   / _ \ (_-</ __// _ \`/ / /  / /       _\ \  / __/ / __/ / /   / _ \/ __/";
@@ -211,7 +272,8 @@ function menu_screen
 	echo "2) Install required packages";
 	echo "3) Install software packages";
 	echo "4) Install customization packages";
-	echo "5) Install all";
+	echo "5) Copy configuration files";
+	echo "6) Install all";
 	echo "Option (e.g., 2, 4, 3): ";
 
 	read options
@@ -221,7 +283,8 @@ function menu_screen
 			2) install_required ;;
 			3) install_software ;;
 			4) install_customization ;;
-			5) install_all ;;
+			5) update_config ;;
+			6) install_all ;;
 		esac
 	done
 }

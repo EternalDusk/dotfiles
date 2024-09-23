@@ -10,9 +10,11 @@ A script to easily and quickly replicate my setup as I move from computer to com
 ### Dependencies
 
 * Fresh arch install running pipewire audio
-* Preinstalled i3 (optional)
+* Preinstalled desktop i3-wm
 
 ### Executing install script
+
+**NOTE** - WGET version currently fails due to 'yay' is installed and ran to install other packages
 
 ```bash
 sudo wget -O - https://raw.githubusercontent.com/EternalDusk/dotfiles/main/installScript-wget.sh | bash
@@ -42,6 +44,21 @@ Just me, myself, and I (with a lot of inspiration from r/unixporn)
 
 * [ ] Flameshot (screenshot manager)
 * [ ] OBS (recording software)
-* [ ] libreoffice-fresh (microsoft suite alternative)
+* [X] libreoffice-still (microsoft suite alternative)
 * [ ] telegram-desktop (messenger)
-* [ ] kando (pie menu)
+* [X] picom (with config)
+* [X] kando (pie menu)
+    * [ ] Custom kando config based off of this setup
+* [ ] properly install yay package manager
+    * checking if working properly
+* [ ] ensure ranger setup worked properly
+    * checking if working properly
+* [ ] add multi-monitor automatic setup support
+* [ ] wine
+* [ ] mini-galaxy
+* [ ] steam
+* [X] needs to run all processes from '~' (ensure on script load)
+* [ ] xorg scrollbar customization
+    * checking if working properly
+* [ ] Alacritty
+* [ ] Fish
