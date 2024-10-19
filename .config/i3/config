@@ -17,10 +17,10 @@ exec --no-startup-id picom --config ~/.config/picom.conf
 
 # my keybindings
 bindsym $mod+l exec i3lock -i $HOME/Pictures/Wallpapers/light.png -e -f
-bindsym $mod+w exec alacritty
+bindsym $mod+Return exec alacritty
 #bindsym $mod+a exec chromium
 #bindsym $mod+e exec dolphin
-bindsym $mod+q kill
+bindsym $mod+Shift+q kill
 #bindsym Print exec spectacle
 bindsym $mod+d exec rofi -show drun -run-shell-command '{terminal} -e fish -ic "{cmd} && read"'
 

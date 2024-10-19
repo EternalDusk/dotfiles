@@ -66,6 +66,7 @@ install_pacman() {
         echo "$package installed successfully."
     else
         echo "Failed to install $package."
+		echo "$package" >> failedPackages.txt
     fi
 }
 
@@ -137,8 +138,10 @@ function install_required
 	# Terminal
 	install_pacman alacritty
 	install_pacman fish
-	echo cat \~/.cache/wal/sequences >> ~./config/fish/fish.conf
-	echo source ~/.cache/wal/colors-tty.sh >> ~./config/fish/fish.conf
+	
+	# Fix how fish is setup with updating wal colors
+	#echo cat \~/.cache/wal/sequences >> ~/.config/fish/fish.conf
+	#echo source ~/.cache/wal/colors-tty.sh >> ~/.config/fish/fish.conf
 }
 
 
@@ -196,7 +199,6 @@ function install_customization
 		cd ..
 	} || echo "Failed to install polybar and polybar themes."
 
-	install_pacman wal
 	install_pacman feh
 	install_pacman python-pywal
 	
